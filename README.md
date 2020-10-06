@@ -1,1 +1,1 @@
-# csc324-Uoft
+# csc324-University of Toronto
