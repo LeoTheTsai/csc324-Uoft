@@ -1,0 +1,70 @@
+#lang racket
+
+(require rackunit)
+(require "partb.rkt")
+
+; Warmup tests: uncomment the module+ test expression (the "#;" comment symbol) when ready!
+#;(module+ test
+    (check-equal? (opt-add 1 1) 2)
+    (check-equal? (opt-add 'failed 1) 'failed)
+    (check-equal? (opt-add 1 'failed) 'failed)
+  
+    (check-equal? (opt-div 1 1) 1)
+    (check-equal? (opt-div 'failed 1) 'failed)
+    (check-equal? (opt-div 1 'failed) 'failed)
+    (check-equal? (opt-div 42 0) 'failed)
+
+#;(module+ test
+    ; Variables
+    (check-equal? (patmat '?x 42 (hash)) (hash '?x 42))
+    (check-equal? (patmat '?x '(+ 41 1) (hash)) (hash '?x '(+ 41 1)))
+    (check-equal? (patmat '?x 42 (hash '?x 42)) (hash '?x 42))
+    (check-equal? (patmat '?x 42 (hash '?x 999)) 'failed)
+
+    ; Lists
+    (check-equal? (patmat '() '() (hash)) (hash))
+    (check-equal? (patmat '(?x ?y ?z) '(1 2 3) (hash))
+                  (hash '?x 1 '?y 2 '?z 3))
+
+    ; Atoms
+    (check-equal? (patmat 1 1 (hash)) (hash))
+    (check-equal? (patmat 1 2 (hash)) 'failed)
+
+    ; Note that patmat doesn't know anything about Racket syntax, so it is happy
+    ; to match infix expressions too.
+    (check-equal? (patmat '(?x + ?y) '(2 + 1) (hash))
+                  (hash '?x 2 '?y 1))
+    
+    )
+
+#;(module+ test
+    ; As with pattern matching, non-variables have to match exactly.
+    (check-equal? (unify 'x 'y (hash)) 'failed)
+    (check-equal? (unify 'x 'x (hash)) (hash))
+
+    ; Now, though, variables can be on either side.
+    (check-equal? (unify '?x 42 (hash)) (hash '?x 42))
+    (check-equal? (unify 42 '?x (hash)) (hash '?x 42))
+  
+    (check-equal? (unify '(?x + 1) '(2 + ?y) (hash)) (hash '?x 2 '?y 1))
+    (check-equal? (unify '(+ ?x ?y) '(+ (+ 1 1) 1) (hash)) (hash '?x '(+ 1 1) '?y 1))
+    
+    (check-equal? (unify '(likes Jacqueline ?x) '(likes Jacqueline cats) (hash))
+                  (hash '?x 'cats)))
+
+
+#;(module+ test
+    (check-equal? (substitute-bindings 'failed 'x) 'failed)
+
+    (check-equal? (substitute-bindings (hash 'x 1) 'x) 1)
+    (check-equal? (substitute-bindings (hash 'x 'y 'y 1) 'y) 1)
+    (check-equal? (substitute-bindings (hash 'x 'y 'y 1) '(y x x)) '(1 1 1))
+    )
+
+#;(module+ test
+    (check-equal? (unification '(?a + ?a = 0) '(?x + ?y = ?y)) '(0 + 0 = 0))
+    
+    (check-equal? (unification '(The ?pet of Jacqueline is named '(the chairman))
+                               '(The  cat of Jacqueline is named ?name))
+                  '(The cat of Jacqueline is named '(the chairman)))
+    )

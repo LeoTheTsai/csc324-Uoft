@@ -1,0 +1,70 @@
+#lang racket
+
+(require rackunit)
+(require "parta.rkt")
+
+; A sample object ...
+(my-class Vector (x y)
+          (method add self other (Vector (+ (self 'x) (other 'x))
+                                         (+ (self 'y) (other 'y)))))
+
+; Some helpers...
+
+; The L1 norm
+; Vector -> number
+(define (L1 self) (+ (abs (self 'x)) (abs (self 'y))))
+
+; The L2 norm
+; Vector -> number
+(define (L2 self) (sqrt (+ (* (self 'x) (self 'x))
+                           (* (self 'y) (self 'y)))))
+
+; The L∞ norm:
+; Vector -> number
+(define (Linf self) (max (self 'x) (self 'y)))
+
+
+; Question 1 tests: uncomment the module+ test expression (the "#;" comment symbol) when ready!
+(module+ test
+    ; By default, this Vector contains no norm.
+    (check-equal? ((Vector 3 4) 'norm) "Unknown msg norm")
+
+    ; Does mixing in the norm method work correctly?
+    (check-equal? (((norm-mixin L1 (Vector 3 4)) 'norm)) 7)
+    (check-equal? (((norm-mixin L2 (Vector 3 4)) 'norm)) 5)
+    (check-equal? (((norm-mixin Linf (Vector 3 4)) 'norm)) 4)
+    )
+
+; Question 2 tests: uncomment the module+ test expression when ready!
+(module+ test
+    (check-equal? ((Vector 3 4) '_fields) '((x . 3) (y . 4)))
+
+    (let ([methods ((Vector 3 4) '_methods)])
+      (check-equal? (map car methods) '(add)))
+
+    ; Object level mixins do not need to be taken into account
+    (let ([methods ((norm-mixin L2 (Vector 3 4)) '_methods)])
+      (check-equal? (map car methods) '(add)))
+
+    )
+
+
+
+; Question 3 tests: uncomment the module+ test expression when ready!
+; UPDATE: 15 July: the result of passing `'to-string` should be a nullary function.
+(module+ test
+    (check-equal? (((to-string-mixin (Vector 3 4)) 'to-string)) "(x=3 y=4)"))
+
+
+
+; Question 4 tests: when you want them to run, you know the drill by now! :-)
+(module+ test
+
+
+    (my-class FancyVector (x y) (with to-string-mixin)
+              (method add self other (Vector (+ (self 'x) (other 'x))
+                                             (+ (self 'y) (other 'y)))))
+
+    (check-equal? ((FancyVector 3 4) 'x) 3)
+    (check-equal? ((FancyVector 3 4) 'y) 4)
+    (check-equal? (((FancyVector 3 4) 'to-string)) "(x=3 y=4)"))

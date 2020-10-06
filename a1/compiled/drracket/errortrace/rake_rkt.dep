@@ -1,0 +1,1 @@
+("7.7" racket ("24c9b48e88cb282ac8b6dd4e68afb374be3e546a" . "dc1bdea0cd76c511d42334148aa88f8762736fc0") #"/Users/leotsai/Documents/csc324/a1/rake_errors.rkt" (collects #"errortrace" #"errortrace-key.rkt") (collects #"racket" #"hash.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"wxme" #"read.rkt"))

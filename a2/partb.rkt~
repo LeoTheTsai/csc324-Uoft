@@ -1,0 +1,91 @@
+#lang racket
+
+(require rackunit)
+
+(provide opt-add opt-div patmat unify substitute-bindings unification)
+
+#|
+Description: Assignment 2 Part B
+
+This code is provided solely for the personal and private use of students
+taking the CSC324 course at the University of Toronto. Copying for purposes
+other than this use is expressly prohibited. All forms of distribution of
+this code, including but not limited to public repositories on GitHub,
+GitLab, Bitbucket, or any other online platform, whether as given or with
+any changes, are expressly prohibited.
+
+Copyright: (c) University of Toronto
+               CSC324 Principles of Programming Languages, Summer 2020
+
+|#
+
+(provide opt-add opt-div patmat)
+
+;;; Warm-up
+
+;Implement opt-add, which consumes two optional numbers. If either number is 'failed,
+;then the result of the sum is also 'failed. Otherwise, add the two numbers.
+
+; (optional number) -> (optional number) -> (optional number)
+(define (opt-add x y)
+  42)
+
+;Implement opt-div, which consumes two optional numbers and, as above, if both arguments
+;are non-'failed, produces the division of the numerator and the denominator if the latter
+;is nonzero, or 'failed if it is zero.
+
+; (optional number) -> (optional number) -> (optional number)
+(define (opt-div x y)
+  42)
+
+
+
+;;; Question 1: Pattern matching
+
+; Returns whether the given symbol is a variable that we should bind a value to
+; (which, according to the grammar, is a symbol that begins with a question mark)
+; symbol -> boolean
+(define (is-patmat-var? s)
+  (and (symbol? s) (equal? #\? (string-ref (symbol->string s) 0))))
+
+; Some sample usages
+(check-equal? (is-patmat-var? 'foo) #f)
+(check-equal? (is-patmat-var? '?x) #t)
+
+
+; Note: If you are having trouble getting started, I always recommend
+; looking at the unit tests provided, and also recommend considering
+; only one part of the grammar at a time.  What does `patmat` look like if
+; it is only ever given, say, variables?  Or, non-variable atomic datums?
+; If you implement that "incomplete" version of `patmat`, can you use that
+; as a helper function when you implement the whole, complete function?
+
+; pattern -> datum -> (optional environment) -> (optional environment)
+(define (patmat pattern input env)
+  'failed)
+
+
+
+;;; Question 2: Unification
+
+; pattern -> pattern -> (optional environment) -> (optional environment)
+(define (unify x y env)
+  'failed)
+
+
+
+;;; Question 3: substitute-bindings
+
+; (optional environment) -> datum -> (optional datum)
+(define (substitute-bindings env expr)
+  'failed)
+
+
+; Our top-level unification driver function.
+; Once you have implemented questions 1-3, this should
+; work completely (see examples of its usage in the
+; test file!)
+;
+; pattern -> pattern -> (optional datum)
+(define (unification x y)
+  (substitute-bindings (unify x y (hash)) x))

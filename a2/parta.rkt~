@@ -1,0 +1,98 @@
+#lang racket
+
+#|
+Description: Assignment 2 Part A
+
+This code is provided solely for the personal and private use of students
+taking the CSC324 course at the University of Toronto. Copying for purposes
+other than this use is expressly prohibited. All forms of distribution of
+this code, including but not limited to public repositories on GitHub,
+GitLab, Bitbucket, or any other online platform, whether as given or with
+any changes, are expressly prohibited.
+
+Copyright: (c) University of Toronto
+               CSC324 Principles of Programming Languages, Summer 2020
+
+|#
+
+(provide my-class norm-mixin to-string-mixin)
+
+(define-syntax my-class
+  (syntax-rules (method)
+    [(my-class <cname> (<field> ...)
+               (method <mname> <margs> ... <mbody>)...)
+     (define (<cname> <field> ...)
+       (letrec ([__class__ (make-immutable-hash
+                            (list
+                             (cons (quote <mname>) (λ (<margs> ...) <mbody>)) ...))]
+                [__dict__ (make-immutable-hash
+                           (list
+                            (cons (quote <field>) <field>) ...))]
+                [self
+                 (λ (msg)
+                   (cond [(hash-has-key? __dict__ msg)
+                          (hash-ref __dict__ msg)]
+                         [(hash-has-key? __class__ msg)
+                          (λ args (apply (hash-ref __class__ msg) (cons self args)))]
+                         (error (format "Unknown msg ~a" msg))))])
+         self))]))
+
+;;; Question 1:
+
+;Implement norm-mixin, which consumes a function f from Vector -> number and an
+;instance of a Vector, and returns a vector identical to v but where ((v 'norm)) = (f v).
+;If the vector already has an norm method attached to it, it should be overridden.
+
+; The L1 norm
+; Vector -> number
+(define (L1 self) (+ (abs (self 'x)) (abs (self 'y))))
+
+; The L2 norm
+; Vector -> number
+(define (L2 self) (sqrt (+ (* (self 'x) (self 'x))
+                           (* (self 'y) (self 'y)))))
+
+; The L∞ norm:
+; Vector -> number
+(define (Linf self) (max (self 'x) (self 'y)))
+
+; (Vector -> number) -> Vector -> Vector
+(define (norm-mixin f v)
+  v)
+
+
+;;; Question 2:
+
+; In this question, please extend the my-class macro to support objects receiving
+; '_fields and '_methods, as described in the handout.
+
+; (work is done in the `my-class` macro above, but use this space for notes or
+; writing your own tests, if you like.)
+
+
+
+;;; Question 3:
+
+;Implement (to-string-mixin o), which consumes an object and produces the equivalent
+;object in a manner similar to question 1: in particular, the produced object should be able to
+;receive a message 'to-string, and when it does, it should produce a string containing all the
+;fields and their values, in order by field. The format of the string should be:
+;"(f1=v1 f2=v2 ... fn=vn)"
+
+; Object -> Object
+(define (to-string-mixin o)
+  o)
+
+
+
+;;; Question 4:
+
+;In this question, you will extend our class macro to support the following syntax:
+;(my-class <cname>
+;          (<field> ...)
+;          (with <mixin> ...)
+;          (method <mname> <margs> ... <mbody>)...)
+;per the assignment handout.
+
+; (work is done in the `my-class` macro above, but use this space for notes or
+; writing your own tests, if you like.)
